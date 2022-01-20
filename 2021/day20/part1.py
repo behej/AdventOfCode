@@ -13,32 +13,21 @@ def convert_dots_and_hashtags_to_index(ar):
 	
 
 
-def define_index(input, x, y):
+def define_index(input, x, y, off_grid_pixel):
 	ar = []
 
-	ar.append(input[y-1][x-1] if ((0 <= (x-1) <= len(input[0])-1) and (0 <= (y-1) <= len(input)-1)) else ".")
-	ar.append(input[y-1][x] if ((0 <= (x) <= len(input[0])-1) and (0 <= (y-1) <= len(input)-1)) else ".")
-	ar.append(input[y-1][x+1] if ((0 <= (x+1) <= len(input[0])-1) and (0 <= (y-1) <= len(input)-1)) else ".")
+	ar.append(input[y-1][x-1] if ((0 <= (x-1) <= len(input[0])-1) and (0 <= (y-1) <= len(input)-1)) else off_grid_pixel)
+	ar.append(input[y-1][x] if ((0 <= (x) <= len(input[0])-1) and (0 <= (y-1) <= len(input)-1)) else off_grid_pixel)
+	ar.append(input[y-1][x+1] if ((0 <= (x+1) <= len(input[0])-1) and (0 <= (y-1) <= len(input)-1)) else off_grid_pixel)
 	
-	ar.append(input[y][x-1] if ((0 <= (x-1) <= len(input[0])-1) and (0 <= (y) <= len(input)-1)) else ".")
-	ar.append(input[y][x] if ((0 <= (x) <= len(input[0])-1) and (0 <= (y) <= len(input)-1)) else ".")
-	ar.append(input[y][x+1] if ((0 <= (x+1) <= len(input[0])-1) and (0 <= (y) <= len(input)-1)) else ".")
+	ar.append(input[y][x-1] if ((0 <= (x-1) <= len(input[0])-1) and (0 <= (y) <= len(input)-1)) else off_grid_pixel)
+	ar.append(input[y][x] if ((0 <= (x) <= len(input[0])-1) and (0 <= (y) <= len(input)-1)) else off_grid_pixel)
+	ar.append(input[y][x+1] if ((0 <= (x+1) <= len(input[0])-1) and (0 <= (y) <= len(input)-1)) else off_grid_pixel)
 	
-	ar.append(input[y+1][x-1] if ((0 <= (x-1) <= len(input[0])-1) and (0 <= (y+1) <= len(input)-1)) else ".")
-	ar.append(input[y+1][x] if ((0 <= (x) <= len(input[0])-1) and (0 <= (y+1) <= len(input)-1)) else ".")
-	ar.append(input[y+1][x+1] if ((0 <= (x+1) <= len(input[0])-1) and (0 <= (y+1) <= len(input)-1)) else ".")
+	ar.append(input[y+1][x-1] if ((0 <= (x-1) <= len(input[0])-1) and (0 <= (y+1) <= len(input)-1)) else off_grid_pixel)
+	ar.append(input[y+1][x] if ((0 <= (x) <= len(input[0])-1) and (0 <= (y+1) <= len(input)-1)) else off_grid_pixel)
+	ar.append(input[y+1][x+1] if ((0 <= (x+1) <= len(input[0])-1) and (0 <= (y+1) <= len(input)-1)) else off_grid_pixel)
 	
-#	ar.append("." if (x <= 0 or y <= 0) else input[y-1][x-1])
-#	ar.append("." if (x < 0 or x >= len(input[0])  or y <= 0) else input[y-1][x])
-#	ar.append("." if (y <= 0 or x >= (len(input[0]) - 1)) else input[y-1][x+1])
-#	
-#	ar.append("." if (x <= 0 or y < 0 or y >= len(input)) else input[y][x-1])
-#	ar.append("." if (x < 0 or x >= len(input[0]) or y < 0 or y >= len(input)) else input[y][x])
-#	ar.append("." if (x >= (len(input[0]) - 1) or y < 0 or y >= len(input)) else input[y][x+1])
-#	
-#	ar.append("." if (x <= 0 or y >= (len(input) - 1)) else input[y+1][x-1])
-#	ar.append("." if (x < 0 or x >= len(input[0])  or y >= (len(input) - 1)) else input[y+1][x])
-#	ar.append("." if (x >= (len(input[0]) - 1) or y >= (len(input) - 1)) else input[y+1][x+1])
 	
 	return convert_dots_and_hashtags_to_index(ar)
 	
@@ -55,14 +44,16 @@ def count_hashtags(image):
 
 
 
-def enhance_image(input):
+def enhance_image(input, even):
 	global enhance_algo
+	
+	off_grid_pixel_state = enhance_algo[-1] if even else enhance_algo[0]
 
 	out = []
 	for y in range(len(input) + 2):
 		out.append([])
 		for x in range(len(input[0]) + 2):
-			index = define_index(input, x-1, y-1)
+			index = define_index(input, x-1, y-1, off_grid_pixel=off_grid_pixel_state)
 			out[y].append(enhance_algo[index])
 			
 	return out
@@ -88,8 +79,8 @@ with  open("input", "r") as f:
 
 
 
-image = enhance_image(image)
-image = enhance_image(image)
+image = enhance_image(image, even=True)
+image = enhance_image(image, even=False)
 
 nb = count_hashtags(image)
-print(nb)
+print("Pixels lit: {}".format(nb))
