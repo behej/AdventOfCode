@@ -44,11 +44,10 @@ def count_hashtags(image):
 
 
 
-def enhance_image(input, even):
+def enhance_image(input, off_grid_pixel_state):
 	global enhance_algo
 	
-	off_grid_pixel_state = enhance_algo[-1] if even else enhance_algo[0]
-
+	
 	out = []
 	for y in range(len(input) + 2):
 		out.append([])
@@ -77,10 +76,12 @@ with  open("input", "r") as f:
 		image.append(l.strip())
 	
 
+invisible_pixel = "."
 
+for i in range(2):
+	image = enhance_image(image, invisible_pixel)
+	invisible_pixel = enhance_algo[0] if invisible_pixel == "." else enhance_algo[-1]
 
-image = enhance_image(image, even=True)
-image = enhance_image(image, even=False)
 
 nb = count_hashtags(image)
 print("Pixels lit: {}".format(nb))
