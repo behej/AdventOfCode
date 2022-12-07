@@ -1,5 +1,7 @@
 #! /usr/bin/python3
 
+from itertools import chain
+
 class Folder:
     def __init__(self, name):
         self.__name__ = name
@@ -10,11 +12,21 @@ class Folder:
         return "Folder {} contains {} subfolders and {} files. Total size={}"\
             .format(self.__name__, len(self.__folders__), len(self.__files__), self.size())
 
-    def folders(self):
-        return self.__folders__.values()
-
     def __getitem__(self, name):
         return self.__folders__[name]
+
+    def __add__(self, o):
+        return self.size() + o.size()
+
+    def __radd__(self, o):
+        if isinstance(o, int):
+            return o + self.size()
+        else:
+            print("else")
+            return self.__add__(o)
+
+    def folders(self):
+        return self.__folders__.values()
 
     def parent(self):
         return self.__parent__
@@ -27,28 +39,19 @@ class Folder:
         self.__files__.append(size)
 
     def size(self):
-        s = sum(self.__files__)
-        for subf in self.folders():
-            s += subf.size()
-        return s
+        return sum(self.__files__) + sum(self.folders())
 
 #######################################################
 
 def sum_size(f):
     s = f.size() if f.size() <= limit else 0
-
-    for i in f.folders():
-        s += sum_size(i)
-
+    s += sum([sum_size(i) for i in f.folders()])
     return s
 
 
 def list_sizes(f):
     l = [f.size()]
-
-    for i in f.folders():
-        l.extend(list(list_sizes(i)))
-
+    l.extend(chain(*[list_sizes(i) for i in f.folders()]))
     return l
 
 #######################################################
