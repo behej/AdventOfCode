@@ -1,148 +1,4 @@
-
-input = """noop
-noop
-addx 5
-noop
-noop
-addx 6
-addx 4
-addx -4
-addx 4
-addx -6
-addx 11
-addx -1
-addx 2
-addx 4
-addx 3
-noop
-addx 2
-addx -30
-addx 2
-addx 33
-noop
-addx -37
-noop
-noop
-noop
-addx 3
-addx 2
-addx 5
-addx 20
-addx 7
-addx -24
-addx 2
-noop
-addx 7
-addx -2
-addx -6
-addx 13
-addx 3
-addx -2
-addx 2
-noop
-addx -5
-addx 10
-addx 5
-addx -39
-addx 1
-addx 5
-noop
-addx 3
-noop
-addx -5
-addx 10
-addx -2
-addx 2
-noop
-noop
-addx 7
-noop
-noop
-noop
-noop
-addx 3
-noop
-addx 3
-addx 2
-addx 8
-addx -1
-addx -20
-addx 21
-addx -38
-addx 5
-addx 2
-noop
-noop
-noop
-addx 8
-noop
-noop
-addx -2
-addx 2
-addx -7
-addx 14
-addx 5
-noop
-noop
-noop
-addx -16
-addx 17
-addx 2
-addx -12
-addx 19
-noop
-noop
-addx -37
-noop
-noop
-noop
-addx 3
-addx 2
-addx 2
-addx 5
-addx 20
-addx -19
-addx 2
-noop
-noop
-noop
-addx 5
-addx 19
-addx -12
-addx 3
-addx -2
-addx 2
-addx -18
-addx 25
-addx -14
-addx -22
-addx 1
-noop
-noop
-noop
-addx 3
-addx 5
-addx -4
-addx 7
-addx 4
-noop
-addx 1
-noop
-noop
-addx 2
-addx -6
-addx 15
-addx -1
-addx 4
-noop
-noop
-addx 1
-addx 4
-addx -33
-noop
-addx 21
-noop"""
-
+#! /usr/bin/python3
 
 def text_px(cycle, reg):
     if (reg-1) <= cycle <= (reg+1):
@@ -154,20 +10,18 @@ cycle = 0
 reg = 1
 tab = []
 
+with open('input', 'r') as f:
+    for inst in f:
+        if inst.strip() == 'noop' or inst.startswith('addx'):
+            text_px(cycle%40, reg)
+            cycle += 1
+        if inst.startswith('addx'):
+            text_px(cycle%40, reg)
+            cycle += 1
 
-for inst in input.split('\n'):
-    if inst == 'noop' or inst.startswith('addx'):
-        text_px(cycle%40, reg)
-        cycle += 1
-    if inst.startswith('addx'):
-        text_px(cycle%40, reg)
-        cycle += 1
-        
-    if inst.startswith('addx'):
-        reg += int(inst.split()[1])
+        if inst.startswith('addx'):
+            reg += int(inst.split()[1])
 
-    
+
 for i in range(0, len(tab), 40):
     print(''.join(tab[i:i+40]))
-    
-    
