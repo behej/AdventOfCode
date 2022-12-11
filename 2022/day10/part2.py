@@ -151,17 +151,17 @@ def text_px(cycle, reg):
         tab.append(' ')
 
 cycle = 0
-reg = 2
+reg = 1
 tab = []
 
 
 for inst in input.split('\n'):
     if inst == 'noop' or inst.startswith('addx'):
-        cycle += 1
         text_px(cycle%40, reg)
+        cycle += 1
     if inst.startswith('addx'):
-        cycle += 1
         text_px(cycle%40, reg)
+        cycle += 1
         
     if inst.startswith('addx'):
         reg += int(inst.split()[1])
