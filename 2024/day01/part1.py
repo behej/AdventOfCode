@@ -1,9 +1,6 @@
 #! /usr/bin/python3
 
 with open("input", "r") as f:
-	pass
-
-with open("input", "r") as f:
 	list1 = []
 	list2 = []
 		
