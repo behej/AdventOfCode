@@ -15,6 +15,7 @@ def in_map(pos):
         return False
 
 def can_move(pos, dir):
+    # print(pos, dir)
     if dir == 0:
         if pos[0] == 0:
             return True
@@ -56,25 +57,66 @@ def move(pos, dir):
     else:
         print("Error")
         
+def can_place_obstacle(pos, dir):
+    if not in_map(move(pos, dir)):
+        return False
+    
+    return map[move(pos, dir)[0]][move(pos, dir)[1]] == "."
+
+
+def place_obstacle(pos, dir):
+    return (move(pos, dir))
+
 
 
 with open("input", "r") as f:
     for y,l in enumerate(f):
         map.append(l.strip())
         if "^" in l:
-            guard = (y, l.index("^"))
+            initial_guard = (y, l.index("^"))
 
-visited = {}
 
-while in_map(guard):
-    if can_move(guard, direction):
-        if guard in visited.keys():
-            visited[guard].append(direction)
+counter = 0
+obstacles = set()
+stop = False
+
+while not stop:
+    guard = initial_guard
+    direction = 0
+    visited = {}
+    loop_detected = False
+    iteration = 0
+    
+
+    while in_map(guard) and not loop_detected:
+        if iteration == counter:
+            if can_place_obstacle(guard, direction):
+                obstacle = place_obstacle(guard, direction)
+                # print("place obstaxle", obstacle)
+                direction = turn(direction)
+
+
+        if can_move(guard, direction):
+            if guard in visited.keys():
+                visited[guard].append(direction)
+            else:
+                visited[guard] = [direction]
+            guard = move(guard, direction)
         else:
-            visited[guard] = [direction]
-        guard = move(guard, direction)
-    else:
-        direction = turn(direction)
+            direction = turn(direction)
+
+        if guard in visited:
+            if direction in visited[guard]:
+                # print("loop_detected")
+                loop_detected = True
+                obstacles.add(obstacle)
+
+        iteration += 1
+
+    if iteration <= counter:
+        stop = True
+    counter += 1
 
 
-print(len(visited))
+print(obstacles)
+print(len(obstacles))
