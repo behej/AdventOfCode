@@ -86,14 +86,16 @@ while not stop:
     visited = {}
     loop_detected = False
     iteration = 0
+    obstacle_placed = False
     
 
     while in_map(guard) and not loop_detected:
         if iteration == counter:
             if can_place_obstacle(guard, direction):
                 obstacle = place_obstacle(guard, direction)
-                # print("place obstaxle", obstacle)
+                print("place obstaxle", obstacle)
                 direction = turn(direction)
+            obstacle_placed = True
 
 
         if can_move(guard, direction):
@@ -113,7 +115,7 @@ while not stop:
 
         iteration += 1
 
-    if iteration <= counter:
+    if not obstacle_placed:
         stop = True
     counter += 1
 
