@@ -5,20 +5,9 @@ def find_contiguous_free_space(l):
     if l == 1:
         return 0
 
-    counter = 1
-    for i in range(1, len(free_pos)):
-        if free_pos[i] - free_pos[i-1] == 1:
-            counter += 1
-            if counter >= l:
-                return i-l+1
-        else:
-            counter = 1
-
-
-    # alternative
-    # for i in range(len(free_pos) - l):
-    #     if free_pos[i+l] == free_pos[i] + l:
-    #         return i
+    for i in range(len(free_pos) - l):
+        if free_pos[i+l-1] == free_pos[i] + l - 1:
+            return i
         
     return -1
 
