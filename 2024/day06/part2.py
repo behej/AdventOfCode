@@ -2,7 +2,7 @@
 
 import math
 
-map = []
+initial_map = []
 direction = 0  # 0:up, 1:right, 2:down, 3:left
 
 def turn(dir):
@@ -61,7 +61,7 @@ def can_place_obstacle(pos, dir):
     if not in_map(move(pos, dir)):
         return False
     
-    return map[move(pos, dir)[0]][move(pos, dir)[1]] == "."
+    return initial_map[move(pos, dir)[0]][move(pos, dir)[1]] == "."
 
 
 def place_obstacle(pos, dir):
@@ -71,54 +71,58 @@ def place_obstacle(pos, dir):
 
 with open("input", "r") as f:
     for y,l in enumerate(f):
-        map.append(l.strip())
+        initial_map.append(l.strip())
         if "^" in l:
             initial_guard = (y, l.index("^"))
 
 
-counter = 0
-obstacles = set()
-stop = False
+initial_path = {}
 
-while not stop:
+guard = initial_guard
+map = [list(l) for l in initial_map]
+
+while in_map(guard):
+    if can_move(guard, direction):
+        if guard in initial_path:
+            initial_path[guard].append(direction)
+        else:
+            initial_path[guard] = [direction]
+        guard = move(guard, direction)
+    else:
+        direction = turn(direction)
+
+
+del(initial_path[initial_guard])
+
+
+
+obstacles = []
+
+for i,p in enumerate(initial_path.keys()):
+    progress = int((i+1) / len(initial_path) * 50)    
+    print("#" * progress + "." * (50-progress), end="\r")
+    
     guard = initial_guard
     direction = 0
-    visited = {}
-    loop_detected = False
-    iteration = 0
-    obstacle_placed = False
-    
+    path = {}
+    map = [list(l) for l in initial_map]
+    map[p[0]][p[1]] = "#"
 
-    while in_map(guard) and not loop_detected:
-        if iteration == counter:
-            if can_place_obstacle(guard, direction):
-                obstacle = place_obstacle(guard, direction)
-                print("place obstaxle", obstacle)
-                direction = turn(direction)
-            obstacle_placed = True
-
-
+    while in_map(guard):
         if can_move(guard, direction):
-            if guard in visited.keys():
-                visited[guard].append(direction)
+            if guard in path:
+                path[guard].append(direction)
             else:
-                visited[guard] = [direction]
+                path[guard] = [direction]
             guard = move(guard, direction)
         else:
             direction = turn(direction)
 
-        if guard in visited:
-            if direction in visited[guard]:
-                # print("loop_detected")
-                loop_detected = True
-                obstacles.add(obstacle)
+        
 
-        iteration += 1
+        if guard in path and direction in path[guard]:
+            obstacles.append(p)
+            break
 
-    if not obstacle_placed:
-        stop = True
-    counter += 1
-
-
-print(obstacles)
+print()
 print(len(obstacles))
